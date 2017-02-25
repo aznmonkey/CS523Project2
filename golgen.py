@@ -1,9 +1,26 @@
 import numpy as np
 import copy
 
-def init():
+def multirun(runs, iterations, size, proportion):
+    while runs > 0:
+        initial = init(size, proportion)
+        file=open('output'+str(runs)+'.txt','w')
+        file.write(",".join([str(n) for n in flatten(initial).tolist()])+"\n")
+        for i in range(iterations):
+            initial = definerules(initial)
+            file.write(",".join([str(n) for n in flatten(initial).tolist()])+"\n")
+        file.close()
+        runs -= 1
 
-    init_array = np.random.randint(2, size=(20,20))
+def init(size, proportion):
+    init_array = np.random.rand(size,size)
+    for i in range(size):
+        for j in range(size):
+            if init_array[i][j] < proportion:
+                init_array[i][j] = 1
+            else: 
+                init_array[i][j] = 0
+    init_array = init_array.astype(int)
     return init_array
 
 def definerules(init_array):
@@ -56,18 +73,4 @@ def flatten(m_array):
     return m_array
 
 if __name__ == '__main__':
-    initial = init()
-    file=open('output.txt','w')
-    file.write(",".join([str(n) for n in flatten(initial).tolist()])+"\n")    
-
-    print(",".join([str(n) for n in flatten(initial).tolist()])+"\n")
-
-    for i in range(10):
-        print("step" + str(i))
-        initial = definerules(initial)
-        for m in range(len(initial)):
-            print(",".join([str(initial[m][n]) for n in range(len(initial[m]))]))
-        print("\n")
-
-        file.write(",".join([str(n) for n in flatten(initial).tolist()])+"\n")
-    file.close()
+    multirun(10, 30, 100, .02)
