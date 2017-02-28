@@ -123,7 +123,7 @@ class PTBModel(object):
 
     self._initial_state = cell.zero_state(batch_size, data_type())
 
-    with tf.device("/cpu:0"):
+    with tf.device("/gpu:0"):
       embedding = tf.get_variable(
           "embedding", [vocab_size, size], dtype=data_type())
       inputs = tf.nn.embedding_lookup(embedding, input_.input_data)
@@ -369,8 +369,8 @@ def main(_):
         valid_perplexity = run_epoch(session, mvalid)
         print("Epoch: %d Valid Perplexity: %.3f" % (i + 1, valid_perplexity))
 
-      test_perplexity = run_epoch(session, mtest)
-      print("Test Perplexity: %.3f" % test_perplexity)
+        test_perplexity = run_epoch(session, mtest)
+        print("Test Perplexity: %.3f" % test_perplexity)
 
       if FLAGS.save_path:
         print("Saving model to %s." % FLAGS.save_path)
