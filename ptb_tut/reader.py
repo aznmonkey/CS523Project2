@@ -44,7 +44,8 @@ def _build_vocab(filename):
 
 def _file_to_word_ids(filename, word_to_id):
   data = _read_words(filename)
-  return [word_to_id[word] for word in data if word in word_to_id]
+  out =  [word_to_id[word] for word in data if word in word_to_id]
+  return out
 
 
 def ptb_raw_data(data_path=None):
@@ -78,6 +79,8 @@ def ptb_raw_data(data_path=None):
   train_data = _file_to_word_ids(train_path, word_to_id)
   valid_data = _file_to_word_ids(valid_path, word_to_id)
   test_data = _file_to_word_ids(test_path, word_to_id)
+  
+  print(train_data)
   vocabulary = len(word_to_id)
   return train_data, valid_data, test_data, vocabulary
 
@@ -117,10 +120,15 @@ def ptb_producer(raw_data, batch_size, num_steps, name=None):
       epoch_size = tf.identity(epoch_size, name="epoch_size")
 
     i = tf.train.range_input_producer(epoch_size, shuffle=False).dequeue()
-    x = tf.strided_slice(data, [0, i * num_steps],
-                         [batch_size, (i + 1) * num_steps])
+    x = tf.strided_slice(
+                        data,
+                        [i * num_steps],
+                        [(i + 1) * num_steps],
+                        [1]
+                        )
     x.set_shape([batch_size, num_steps])
-    y = tf.strided_slice(data, [0, i * num_steps + 1],
-                         [batch_size, (i + 1) * num_steps + 1])
+    y = tf.strided_slice(data, [i * num_steps + 1],
+                         [(i + 1) * num_steps + 1], [1])
     y.set_shape([batch_size, num_steps])
+    print("DOUGHNUT")
     return x, y

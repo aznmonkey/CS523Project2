@@ -82,8 +82,8 @@ FLAGS = flags.FLAGS
 
 
 def data_type():
-  return tf.float16 if FLAGS.use_fp16 else tf.float32
-
+  #return tf.input if FLAGS.use_fp16 else tf.float32
+  return tf.int32
 
 class PTBInput(object):
   """The input data."""
@@ -106,7 +106,9 @@ class PTBModel(object):
     num_steps = input_.num_steps
     size = config.hidden_size
     vocab_size = config.vocab_size
-
+    
+    RNN_HIDDEN    = 20
+    
     # Slightly better results can be obtained with forget gate biases
     # initialized to 1 but the hyperparameters of the model would need to be
     # different than reported in the paper.
@@ -118,16 +120,19 @@ class PTBModel(object):
       def attn_cell():
         return tf.contrib.rnn.DropoutWrapper(
             lstm_cell(), output_keep_prob=config.keep_prob)
-    cell = tf.contrib.rnn.MultiRNNCell(
-        [attn_cell() for _ in range(config.num_layers)], state_is_tuple=True)
-
+    #cell = tf.contrib.rnn.core_rnn_cell.MultiRNNCell(
+    #    [attn_cell() for _ in range(config.num_layers)], state_is_tuple=True)
+    #cell = tf.nn.rnn_cell.BasicLSTMCell(RNN_HIDDEN, state_is_tuple=True)
+    cell = tf.nn.rnn_cell.BasicRNNCell(RNN_HIDDEN)
+    print("BOOM COOKED BY EXPLOSION")
     self._initial_state = cell.zero_state(batch_size, data_type())
-
+    print("PI is exactly 3!")
     with tf.device("/cpu:0"):
       embedding = tf.get_variable(
-          "embedding", [vocab_size, size], dtype=data_type())
+          "embedding", [vocab_size, size], dtype=tf.float32)
       inputs = tf.nn.embedding_lookup(embedding, input_.input_data)
-
+    print("GW that")
+    print("little brown jug")
     if is_training and config.keep_prob < 1:
       inputs = tf.nn.dropout(inputs, config.keep_prob)
 
@@ -150,7 +155,7 @@ class PTBModel(object):
     #    if time_step > 0: tf.get_variable_scope().reuse_variables()
     #    (cell_output, state) = cell(inputs[:, time_step, :], state)
     #    outputs.append(cell_output)
-
+    
     output = tf.reshape(tf.concat(outputs, 1), [-1, size])
     softmax_w = tf.get_variable(
         "softmax_w", [size, vocab_size], dtype=data_type())
