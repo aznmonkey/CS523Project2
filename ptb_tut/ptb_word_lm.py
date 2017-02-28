@@ -362,12 +362,12 @@ def main(_):
         lr_decay = config.lr_decay ** max(i + 1 - config.max_epoch, 0.0)
         m.assign_lr(session, config.learning_rate * lr_decay)
 
-        print("Epoch: %d Learning rate: %.3f" % (i + 1, session.run(m.lr)))
+        print("Epoch (THING): %d Learning rate: %.3f" % (i + 1, session.run(m.lr)))
         train_perplexity = run_epoch(session, m, eval_op=m.train_op,
                                      verbose=True)
-        print("Epoch: %d Train Perplexity: %.3f" % (i + 1, train_perplexity))
+        print("Epoch (THING): %d Train Perplexity: %.3f" % (i + 1, train_perplexity))
         valid_perplexity = run_epoch(session, mvalid)
-        print("Epoch: %d Valid Perplexity: %.3f" % (i + 1, valid_perplexity))
+        print("Epoch (THING): %d Valid Perplexity: %.3f" % (i + 1, valid_perplexity))
 
         test_perplexity = run_epoch(session, mtest)
         print("Test Perplexity: %.3f" % test_perplexity)

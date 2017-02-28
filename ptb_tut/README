@@ -6,4 +6,8 @@ sudo /usr/local/bin/nvidia-docker run -v /home/cs523/TeamStayputnik:/test -it te
 To run:
 $ python ptb_word_lm.py --data_path=./data/ --model=small
 
+$ python ptb_word_lm.py --data_path=./data/ --model=small --save_path=./results/
+
 /home/evl/anishi2/bin/python3.5 ptb_word_lm.py --data_path=./data/ --model=small
+
+/home/evl/anishi2/bin/python3.5 ptb_word_lm.py --data_path=./data/ --model=small --save_path=./results/
