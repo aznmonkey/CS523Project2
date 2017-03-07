@@ -63,4 +63,4 @@ def definerules(init_array):
     return modified_array
             
 if __name__ == '__main__':
-    multirun(1, 30, 100)
+    multirun(1, 30, 20000)

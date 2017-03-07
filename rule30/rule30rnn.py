@@ -17,7 +17,7 @@ separate raw data into a sequence along with label sequence outputs
 def generate_data(content):
     sequence = []
     label_sequence = []
-    for i in range(len(content)):
+    for i in range(len(content)-1):
         content[i] = [int(x) for x in content[i].split(',')]
         if i%2 == 0:
             temp_list = []
@@ -26,14 +26,14 @@ def generate_data(content):
             sequence.append(np.array(temp_list))
         else:
             label_sequence.append(content[i])
-    print(sequence)
+    ##print(len(sequence[0]))
     return sequence, label_sequence
 
 '''
 generate tf example from sequence
 '''
 def train(sequence, labels):
-    NUM_EXAMPLES = 1000
+    NUM_EXAMPLES = 10000
     test_input = sequence[NUM_EXAMPLES:]
     test_output = labels[NUM_EXAMPLES:] #everything beyond 1,000
     
@@ -53,14 +53,18 @@ def train(sequence, labels):
     
     weight = tf.Variable(tf.truncated_normal([num_hidden, int(target.get_shape()[1])]))
     bias = tf.Variable(tf.constant(0.1, shape=[target.get_shape()[1]]))
-
+    print("weight shape: ", weight.get_shape())
+    print("bias shape: ", bias.get_shape())
+    
     prediction = tf.nn.softmax(tf.matmul(last, weight) + bias)
-
+    print("prediction shape: ", prediction.get_shape())
+    print("target shape: ", target.get_shape())
     cross_entropy = -tf.reduce_sum(target * tf.log(tf.clip_by_value(prediction,1e-10,1.0)))
 
     optimizer = tf.train.AdamOptimizer()
     minimize = optimizer.minimize(cross_entropy)
-
+    print("target argmax", tf.argmax(target,1))
+    print("prediction argmax:", tf.argmax(prediction,1))
     mistakes = tf.not_equal(tf.argmax(target, 1), tf.argmax(prediction, 1))
     error = tf.reduce_mean(tf.cast(mistakes, tf.float32))
 
@@ -70,7 +74,7 @@ def train(sequence, labels):
 
     batch_size = 1000
     no_of_batches = int(len(train_input)/batch_size)
-    epoch = 1000
+    epoch = 100
     for i in range(epoch):
         ptr = 0
         for j in range(no_of_batches):
