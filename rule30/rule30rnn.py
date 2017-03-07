@@ -1,5 +1,22 @@
 import tensorflow as tf
 import numpy as np
+import time
+import datetime
+import sys
+
+'''
+outputs print to console and text log
+'''
+class Tee(object):
+    def __init__(self, *files):
+        self.files = files
+    def write(self, obj):
+        for f in self.files:
+            f.write(obj)
+            f.flush() # If you want the output to be visible immediately
+    def flush(self) :
+        for f in self.files:
+            f.flush()
 
 '''
 read raw data from file
@@ -85,9 +102,14 @@ def train(sequence, labels):
     incorrect = sess.run(error,{data: test_input, target: test_output})
     ##print(sess.run(prediction,{data: [[[0],[0],[0],[1],[1],[0],[1],[1],[1],[0],[1],[0],[0],[1],[1],[0],[1],[1],[1],[0]]]}))
     print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
+    print(sess.run(prediction,{data: [[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[1],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]]]}))
     sess.close()
 
 if __name__ == '__main__':
+    ts = time.time()
+    f = open('log-'+str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d-%H-%M-%S'))+'.txt', 'w')
+    sys.stdout = Tee(sys.stdout, f)
+
     content = read_file('output1.txt')
     ##print(len(content))
     sequence, label_sequence = generate_data(content)
