@@ -74,7 +74,7 @@ def train(sequence, labels):
 
     batch_size = 1000
     no_of_batches = int(len(train_input)/batch_size)
-    epoch = 100
+    epoch = 1000
     for i in range(epoch):
         ptr = 0
         for j in range(no_of_batches):
@@ -83,8 +83,8 @@ def train(sequence, labels):
             sess.run(minimize,{data: inp, target: out})
         print ("Epoch - ",str(i))
     incorrect = sess.run(error,{data: test_input, target: test_output})
-    print(sess.run(prediction,{data: [[[0],[0],[0],[1],[1],[0],[1],[1],[1],[0],[1],[0],[0],[1],[1],[0],[1],[1],[1],[0]]]}))
-    ##print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
+    ##print(sess.run(prediction,{data: [[[0],[0],[0],[1],[1],[0],[1],[1],[1],[0],[1],[0],[0],[1],[1],[0],[1],[1],[1],[0]]]}))
+    print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
     sess.close()
 
 if __name__ == '__main__':
