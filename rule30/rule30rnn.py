@@ -34,7 +34,7 @@ separate raw data into a sequence along with label sequence outputs
 def generate_data(content):
     sequence = []
     label_sequence = []
-    for i in range(len(content)-1):
+    for i in range(len(content)):
         content[i] = [int(x) for x in content[i].split(',')]
         if i%2 == 0:
             temp_list = []
@@ -44,13 +44,14 @@ def generate_data(content):
         else:
             label_sequence.append(content[i])
     print(sequence[0])
+    print(len(sequence), len(label_sequence))
     return sequence, label_sequence
 
 '''
 generate tf example from sequence
 '''
 def train(sequence, labels):
-    NUM_EXAMPLES = 10000
+    NUM_EXAMPLES = 100000
     test_input = sequence[NUM_EXAMPLES:]
     test_output = labels[NUM_EXAMPLES:] #everything beyond 1,000
     
@@ -60,7 +61,7 @@ def train(sequence, labels):
     data = tf.placeholder(tf.float32, [None, 30, 1])
     target = tf.placeholder(tf.float32, [None, 30])
 
-    num_hidden = 24
+    num_hidden = 36
     cell = tf.nn.rnn_cell.LSTMCell(num_hidden,state_is_tuple=True)
 
     val, state = tf.nn.dynamic_rnn(cell, data, dtype=tf.float32)
@@ -91,7 +92,7 @@ def train(sequence, labels):
 
     batch_size = 1000
     no_of_batches = int(len(train_input)/batch_size)
-    epoch = 1000
+    epoch = 100
     for i in range(epoch):
         ptr = 0
         for j in range(no_of_batches):
