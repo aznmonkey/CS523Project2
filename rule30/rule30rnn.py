@@ -22,11 +22,11 @@ def generate_data(content):
         if i%2 == 0:
             temp_list = []
             for j in content[i]:
-                temp_list.append([content[i][j]])
+                temp_list.append([j])
             sequence.append(np.array(temp_list))
         else:
             label_sequence.append(content[i])
-    ##print(len(sequence[0]))
+    print(sequence[0])
     return sequence, label_sequence
 
 '''
@@ -83,7 +83,8 @@ def train(sequence, labels):
             sess.run(minimize,{data: inp, target: out})
         print ("Epoch - ",str(i))
     incorrect = sess.run(error,{data: test_input, target: test_output})
-    print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
+    print(sess.run(prediction,{data: [[[0],[0],[0],[1],[1],[0],[1],[1],[1],[0],[1],[0],[0],[1],[1],[0],[1],[1],[1],[0]]]}))
+    ##print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
     sess.close()
 
 if __name__ == '__main__':
