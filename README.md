@@ -18,8 +18,13 @@ To generate pngs run toimage.py to generate images of the outputs (outputs to pr
 #How it works:
 Rule 30 is a simple deterministic cellular automata:
 https://en.wikipedia.org/wiki/Rule_30
+
 The RNN is a simple RNN with 1 hidden layer 
-The every other row of the training data is used as the input and the rest of the rows are used as the output to be used to generate the error.
+
+The every other row of the training data is used as the input and the rest of the rows are used as the output to be used to generate the 
+error.
+
+The final predicted output is normalized and then used to generate a png
 
 #Samples
 Below is an image of part of the original training set:
