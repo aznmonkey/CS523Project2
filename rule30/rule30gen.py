@@ -1,19 +1,20 @@
-import numpy as np
 import copy
+import numpy as np
+
 
 def multirun(runs, size, iterations):
     max_run = runs
     while runs > 0:
         initial = init(size)
         if runs == max_run:
-            file = open('output1.txt', 'w')
+            file1 = open('output1.txt', 'w')
         else: 
-            file = open('output1.txt','a')
-        file.write(",".join([str(n) for n in initial.tolist()])+"\n")
+            file1 = open('output1.txt','a')
+        file1.write(",".join([str(n) for n in initial.tolist()])+"\n")
         for i in range(int(iterations)):
             initial = definerules(initial)
-            file.write(",".join([str(n) for n in initial.tolist()])+"\n")
-        file.close()
+            file1.write(",".join([str(n) for n in initial.tolist()])+"\n")
+        file1.close()
         runs -= 1
 
 def init(size):
@@ -65,6 +66,6 @@ def definerules(init_array):
                 modified_array[i] = 0
 
     return modified_array
-            
+
 if __name__ == '__main__':
     multirun(2000, 30, 100)

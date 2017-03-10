@@ -43,9 +43,39 @@ def generate_data(content):
             sequence.append(np.array(temp_list))
         else:
             label_sequence.append(content[i])
-    print(sequence[0])
-    print(len(sequence), len(label_sequence))
+ ##   print(sequence[0])
+ ##   print(len(sequence), len(label_sequence))
     return sequence, label_sequence
+
+'''
+normalize predicted outputs from nn
+'''
+def normalize(output):
+   normalized_output = output/np.amax(output)
+   for i in range(len(normalized_output)):
+       normalized_output[i] = np.around(normalized_output[i])
+   return normalized_output
+
+'''
+turn output format to input format
+'''
+def output_to_input(normalized_output):
+   new_input = []
+   temp_list = []
+   for j in range(len(normalized_output[0])):
+       temp_list.append([int(normalized_output[0][j])])
+   new_input.append(np.array(temp_list))
+   return new_input
+
+'''
+output prediction to file
+'''
+def generate_predictions(prediction, intial_run):
+    if intial_run == 1:
+        file1 = open('output2.txt', 'w')
+    else:
+        file1 = open('output2.txt','a')
+    file1.write(",".join([str(n) for n in prediction[0].tolist()])+"\n")
 
 '''
 generate tf example from sequence
@@ -92,7 +122,7 @@ def train(sequence, labels):
 
     batch_size = 1000
     no_of_batches = int(len(train_input)/batch_size)
-    epoch = 100
+    epoch = 1
     for i in range(epoch):
         ptr = 0
         for j in range(no_of_batches):
@@ -101,9 +131,15 @@ def train(sequence, labels):
             sess.run(minimize,{data: inp, target: out})
         print ("Epoch - ",str(i))
     incorrect = sess.run(error,{data: test_input, target: test_output})
-    ##print(sess.run(prediction,{data: [[[0],[0],[0],[1],[1],[0],[1],[1],[1],[0],[1],[0],[0],[1],[1],[0],[1],[1],[1],[0]]]}))
     print('Epoch {:2d} error {:3.1f}%'.format(i + 1, 100 * incorrect))
-    print(sess.run(prediction,{data: [[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[1],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]]]}))
+    
+    predicted_output = sess.run(prediction,{data: [[[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[1],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]]]})
+    generate_predictions(normalize(predicted_output), 1)
+    iterations = 30
+    while iterations > 0:
+        predicted_output = sess.run(prediction,{data: output_to_input(normalize(predicted_output))})
+        generate_predictions(normalize(predicted_output), 0)
+        iterations -=1
     sess.close()
 
 if __name__ == '__main__':
